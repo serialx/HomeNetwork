@@ -551,6 +551,12 @@ class PacketParser:
                 'mode': mode,
                 'rotation_speed': rotation_speed
             }
+            if dev_idx == 0:
+                # 현재 방의 온도를 알려주는 패킷인듯? dev_idx=0 이고 대부분의 값들이 쓰레기값들이다
+                # F7 0F 01 1C 04 45 11 1A 01 18 1A 01 01 AC EE  <-- 이게 위 정상 코드가 기대하는 리턴값
+                # F7 10 01 1C 04 5E 10 00 01 01 18 19 01 01 B1 EE  <-- dev_idx == 0 일 때 받은 값들
+                self.log(f'Skipping unknown AIRCONDITIONER PACKET> {self.prettifyPacket(packet)}')
+                return
             self.updateDeviceState(result)
 
     def handleElevator(self, packet: bytearray):
